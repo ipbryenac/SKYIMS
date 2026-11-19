@@ -152,7 +152,8 @@ class RegisteredUserController extends Controller
         ]);
 
         $createdData = DB::transaction(function () use ($request, $validated) {
-            $fullName = trim("{$validated['first_name']} {$validated['last_name']} {$validated['suffix']}");
+            $suffix = ! empty($validated['suffix']) ? ' '.$validated['suffix'] : '';
+            $fullName = trim("{$validated['first_name']} {$validated['last_name']}{$suffix}");
 
             // 1. Create Base User
             $user = User::create([

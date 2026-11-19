@@ -83,7 +83,7 @@ Route::middleware(['auth'])->prefix('youth')->name('youth.')->group(function () 
 });
 
 // 2. SK COUNCIL ADMIN DASHBOARD ROUTES
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'sk.official'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Admin/Dashboard', [
             'metrics' => [
