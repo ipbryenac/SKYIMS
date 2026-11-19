@@ -57,7 +57,7 @@ class SendEventBroadcastNotificationJob implements ShouldQueue
                     $user->notify(new EventAnnouncementNotification($this->event, $this->customMessage));
                     $emailCount++;
                 } catch (\Throwable $e) {
-                    Log::warning("Notification failed for user {$user->id}: " . $e->getMessage());
+                    Log::warning("Notification failed for user {$user->id}: ".$e->getMessage());
                 }
             }
 
@@ -74,7 +74,7 @@ class SendEventBroadcastNotificationJob implements ShouldQueue
                     );
                     $smsCount++;
                 } catch (\Throwable $e) {
-                    Log::error("SMS dispatch failed for user {$user->id} ({$user->phone_number}): " . $e->getMessage());
+                    Log::error("SMS dispatch failed for user {$user->id} ({$user->phone_number}): ".$e->getMessage());
                 }
             }
         }

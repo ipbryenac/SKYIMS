@@ -51,6 +51,7 @@ class YouthBadgeController extends Controller
 
         $allBadges = Badge::all()->map(function ($badge) use ($earnedMap) {
             $userBadge = $earnedMap[$badge->id] ?? null;
+
             return [
                 'id' => $badge->id,
                 'name' => $badge->name,
@@ -81,4 +82,3 @@ class YouthBadgeController extends Controller
         ]);
     }
 }
-

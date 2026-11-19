@@ -25,15 +25,15 @@ class SmsService
         $cleaned = preg_replace('/[^\d+]/', '', $phone);
 
         if (str_starts_with($cleaned, '+63')) {
-            return '0' . substr($cleaned, 3);
+            return '0'.substr($cleaned, 3);
         }
 
         if (str_starts_with($cleaned, '63') && strlen($cleaned) === 12) {
-            return '0' . substr($cleaned, 2);
+            return '0'.substr($cleaned, 2);
         }
 
         if (str_starts_with($cleaned, '9') && strlen($cleaned) === 10) {
-            return '0' . $cleaned;
+            return '0'.$cleaned;
         }
 
         return $cleaned;
@@ -45,6 +45,7 @@ class SmsService
     public function isValidPhilippineMobile(string $phone): bool
     {
         $normalized = $this->normalizePhoneNumber($phone);
+
         return (bool) preg_match('/^09\d{9}$/', $normalized);
     }
 
@@ -75,7 +76,7 @@ class SmsService
         $senderName = config('services.semaphore.sender_name', env('SEMAPHORE_SENDER_NAME', 'SKYIMS'));
 
         // If configured to use Semaphore and API key is present
-        if ($driver === 'semaphore' && !empty($apiKey)) {
+        if ($driver === 'semaphore' && ! empty($apiKey)) {
             try {
                 $response = Http::timeout(10)->asForm()->post('https://api.semaphore.co/api/v4/messages', [
                     'apikey' => $apiKey,
@@ -98,7 +99,7 @@ class SmsService
                     'response_details' => json_encode($body),
                 ]);
 
-                Log::info("[SEMAPHORE SMS] Dispatched to {$normalizedPhone}: " . ($success ? 'SUCCESS' : 'FAILED'));
+                Log::info("[SEMAPHORE SMS] Dispatched to {$normalizedPhone}: ".($success ? 'SUCCESS' : 'FAILED'));
 
                 return [
                     'success' => $success,
@@ -176,7 +177,7 @@ class SmsService
             $name = is_array($recipient) ? ($recipient['name'] ?? null) : ($recipient->name ?? null);
             $userId = is_array($recipient) ? ($recipient['id'] ?? null) : ($recipient->id ?? null);
 
-            if (!$phone) {
+            if (! $phone) {
                 continue;
             }
 
@@ -185,7 +186,7 @@ class SmsService
 
             if ($result['driver'] === 'simulator') {
                 $stats['simulated']++;
-            } elseif (!empty($result['success'])) {
+            } elseif (! empty($result['success'])) {
                 $stats['sent']++;
             } else {
                 $stats['failed']++;
@@ -195,4 +196,3 @@ class SmsService
         return $stats;
     }
 }
-

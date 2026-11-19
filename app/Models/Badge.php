@@ -28,4 +28,3 @@ class Badge extends Model
         return $this->hasMany(UserBadge::class);
     }
 }
-

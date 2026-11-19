@@ -32,4 +32,3 @@ class UserBadge extends Model
         return $this->belongsTo(Badge::class);
     }
 }
-

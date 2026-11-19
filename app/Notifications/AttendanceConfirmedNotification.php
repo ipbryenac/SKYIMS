@@ -31,7 +31,7 @@ class AttendanceConfirmedNotification extends Notification
             ->line("**Activity:** {$this->event->title}")
             ->line("**Participation XP Earned:** +{$this->pointsEarned} XP");
 
-        if (!empty($this->newBadges)) {
+        if (! empty($this->newBadges)) {
             $badgeNames = implode(', ', $this->newBadges);
             $mail->line("🏆 **Congratulations! You unlocked new badges:** {$badgeNames}!");
         }
@@ -52,4 +52,3 @@ class AttendanceConfirmedNotification extends Notification
         ];
     }
 }
-

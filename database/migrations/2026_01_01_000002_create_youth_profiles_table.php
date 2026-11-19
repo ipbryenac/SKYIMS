@@ -38,7 +38,7 @@ return new class extends Migration
                 'In-School Youth',
                 'Out-of-School Youth',
                 'Working Youth',
-                'Youth with Specific Needs'
+                'Youth with Specific Needs',
             ])->default('In-School Youth');
 
             $table->json('specific_needs_details')->nullable();
@@ -54,7 +54,7 @@ return new class extends Migration
                 'Vocational Course',
                 'College Level',
                 'College Graduate',
-                'Post-Graduate Level'
+                'Post-Graduate Level',
             ]);
 
             $table->enum('work_status', [
@@ -62,7 +62,7 @@ return new class extends Migration
                 'Unemployed',
                 'Self-Employed',
                 'Looking for Job',
-                'Not Applicable'
+                'Not Applicable',
             ])->default('Not Applicable');
 
             // Electoral Participation
@@ -99,4 +99,3 @@ return new class extends Migration
         Schema::dropIfExists('youth_profiles');
     }
 };
-

@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventAttendance;
 use App\Models\EventRegistration;
+use App\Models\User;
 use App\Models\YouthProfile;
 use App\Notifications\AttendanceConfirmedNotification;
 use App\Services\GamificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -68,17 +70,24 @@ class AdminAttendanceController extends Controller
         $rawCode = trim($request->input('code'));
         $event = Event::findOrFail($eventId);
 
-        // Parse code: could be raw youth_code (e.g. TIBAO-2026-XXXXX), JSON string, or ticket UUID
+        // Parse code: could be raw youth_code (e.g. TIBAO-2026-00001), JSON payload, URL, or ticket UUID
         $youthCode = $rawCode;
         if (str_starts_with($rawCode, '{') && str_ends_with($rawCode, '}')) {
             $parsed = json_decode($rawCode, true);
-            if (!empty($parsed['code'])) {
+            if (! empty($parsed['code'])) {
                 $youthCode = $parsed['code'];
             }
         }
 
+        // Extract pattern TIBAO-YYYY-XXXXX if embedded inside a string or URL
+        if (preg_match('/(TIBAO-\d{4}-\d{5})/i', $youthCode, $matches)) {
+            $youthCode = strtoupper($matches[1]);
+        }
+
         // 1. Locate Youth Profile
-        $profile = YouthProfile::where('youth_code', $youthCode)->first();
+        $profile = YouthProfile::where('youth_code', $youthCode)
+            ->orWhereRaw('UPPER(youth_code) = ?', [strtoupper($youthCode)])
+            ->first();
         $user = null;
 
         if ($profile) {
@@ -92,16 +101,27 @@ class AdminAttendanceController extends Controller
             if ($registration) {
                 $user = $registration->user;
                 $profile = $user?->profile;
+            } else {
+                // Check if searched by phone number or email
+                $matchedUser = User::with('profile')
+                    ->where('phone_number', $rawCode)
+                    ->orWhere('email', strtolower($rawCode))
+                    ->first();
+                if ($matchedUser && $matchedUser->profile) {
+                    $user = $matchedUser;
+                    $profile = $matchedUser->profile;
+                }
             }
         }
 
-        if (!$profile || !$user) {
+        if (! $profile || ! $user) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => "Invalid or unrecognized QR code ({$rawCode}). Youth not found in Katipunan ng Kabataan registry.",
                 ], 404);
             }
+
             return back()->with('error', "Unrecognized QR code ({$rawCode}). Youth profile not found.");
         }
 
@@ -126,6 +146,7 @@ class AdminAttendanceController extends Controller
                     ],
                 ], 409);
             }
+
             return back()->with('warning', $msg);
         }
 
@@ -133,7 +154,7 @@ class AdminAttendanceController extends Controller
         EventRegistration::updateOrCreate(
             ['event_id' => $event->id, 'user_id' => $user->id],
             [
-                'ticket_token' => (string) \Illuminate\Support\Str::uuid(),
+                'ticket_token' => (string) Str::uuid(),
                 'status' => 'attended',
             ]
         );
@@ -184,4 +205,3 @@ class AdminAttendanceController extends Controller
         return back()->with('success', $successMsg);
     }
 }
-

@@ -99,7 +99,9 @@ class NeedsAssessmentSeeder extends Seeder
         ];
 
         foreach ($youthProfiles as $index => $profile) {
-            if (!$profile->user) continue;
+            if (! $profile->user) {
+                continue;
+            }
 
             // Skip one or two so the user can see uncompleted prompt in youth dashboard
             if ($profile->user->email === 'alyssa.alcantara@gmail.com') {
@@ -122,7 +124,7 @@ class NeedsAssessmentSeeder extends Seeder
                     'youth_profile_id' => $profile->id,
                     'answers' => [
                         1 => $primary,
-                        2 => $profile->youth_classification === 'Out-of-School Youth' 
+                        2 => $profile->youth_classification === 'Out-of-School Youth'
                             ? 'Lack of job opportunities and livelihood skills'
                             : 'Limited sports, recreational, and study facilities',
                         3 => $index % 2 === 0 ? 'Saturday / Sunday Afternoons' : 'Saturday / Sunday Mornings',
@@ -140,4 +142,3 @@ class NeedsAssessmentSeeder extends Seeder
         }
     }
 }
-

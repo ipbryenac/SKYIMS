@@ -51,4 +51,3 @@ class CreateAdminUser extends Command
         $this->info("✅ Successfully created/updated Admin user: {$user->email} [{$user->role}]");
     }
 }
-

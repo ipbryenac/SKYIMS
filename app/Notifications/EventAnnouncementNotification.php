@@ -6,7 +6,6 @@ use App\Models\Event;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Log;
 
 class EventAnnouncementNotification extends Notification
 {
@@ -35,7 +34,7 @@ class EventAnnouncementNotification extends Notification
         return (new MailMessage)
             ->subject("📢 SK Tibao Announcement: {$this->event->title}")
             ->greeting("Hello {$notifiable->name}!")
-            ->line("The Sangguniang Kabataan Council of Barangay Tibao invites you to attend an upcoming youth activity:")
+            ->line('The Sangguniang Kabataan Council of Barangay Tibao invites you to attend an upcoming youth activity:')
             ->line("**Event:** {$this->event->title}")
             ->line("**Category:** {$this->event->category}")
             ->line("**Venue:** {$venue}")
@@ -55,8 +54,7 @@ class EventAnnouncementNotification extends Notification
             'venue' => $this->event->venue,
             'start_datetime' => $this->event->start_datetime->toIso8601String(),
             'points_reward' => $this->event->points_reward,
-            'message' => $this->customMessage ?: "Upcoming SK community event in Barangay Tibao.",
+            'message' => $this->customMessage ?: 'Upcoming SK community event in Barangay Tibao.',
         ];
     }
 }
-

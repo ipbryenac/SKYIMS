@@ -72,4 +72,3 @@ class Event extends Model
             ->update(['status' => 'ongoing']);
     }
 }
-

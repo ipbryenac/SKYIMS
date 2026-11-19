@@ -27,7 +27,7 @@ return new class extends Migration
                 'Social Inclusion & Gender Equality',
                 'Peace-building & Security',
                 'Environment & Climate Action',
-                'Global Mobility & Sports/Culture'
+                'Global Mobility & Sports/Culture',
             ])->default('Global Mobility & Sports/Culture');
 
             $table->string('venue')->default('Barangay Tibao Multi-Purpose Gym');
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->unsignedInteger('points_reward')->default(50)->comment('Gamification XP for attendance');
 
             $table->enum('status', ['draft', 'published', 'ongoing', 'completed', 'cancelled'])
-                  ->default('draft');
+                ->default('draft');
 
             $table->string('banner_image_path')->nullable();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
@@ -60,4 +60,3 @@ return new class extends Migration
         Schema::dropIfExists('events');
     }
 };
-

@@ -27,4 +27,3 @@ class EventRegistration extends Model
         return $this->belongsTo(User::class);
     }
 }
-

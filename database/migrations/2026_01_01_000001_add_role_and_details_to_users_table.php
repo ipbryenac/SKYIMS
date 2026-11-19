@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['super_admin', 'sk_chairperson', 'sk_official', 'youth_member'])
-                  ->default('youth_member')
-                  ->after('email');
+                ->default('youth_member')
+                ->after('email');
             $table->string('phone_number', 15)->nullable()->unique()->after('role');
             $table->boolean('is_active')->default(true)->after('phone_number');
             $table->softDeletes()->after('updated_at');
@@ -35,4 +35,3 @@ return new class extends Migration
         });
     }
 };
-

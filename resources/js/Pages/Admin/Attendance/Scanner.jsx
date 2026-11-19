@@ -1,6 +1,8 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
+import { Html5Qrcode } from 'html5-qrcode';
+import { AlertCircle, Camera, CameraOff, CheckCircle2, RefreshCw, Smartphone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AdminAttendanceScanner({
@@ -14,7 +16,131 @@ export default function AdminAttendanceScanner({
     const [scanResult, setScanResult] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [logs, setLogs] = useState(recentAttendances);
+    const [isCameraActive, setIsCameraActive] = useState(false);
+    const [cameraStarting, setCameraStarting] = useState(false);
+    const [cameraError, setCameraError] = useState(null);
     const inputRef = useRef(null);
+    const scannerRef = useRef(null);
+    const lastScannedRef = useRef({ code: '', time: 0 });
+
+    const playBeep = () => {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.12);
+        } catch {
+            // Audio blocked
+        }
+    };
+
+    const stopCamera = async () => {
+        if (scannerRef.current) {
+            try {
+                if (scannerRef.current.isScanning) {
+                    await scannerRef.current.stop();
+                }
+                scannerRef.current.clear();
+            } catch (e) {
+                console.warn('Error stopping scanner:', e);
+            }
+            scannerRef.current = null;
+        }
+        setIsCameraActive(false);
+        setCameraStarting(false);
+    };
+
+    const startCamera = async () => {
+        setCameraError(null);
+        setCameraStarting(true);
+
+        try {
+            if (scannerRef.current) {
+                await stopCamera();
+            }
+
+            const html5QrCode = new Html5Qrcode('qr-reader-viewport');
+            scannerRef.current = html5QrCode;
+
+            const qrCodeSuccessCallback = (decodedText) => {
+                const now = Date.now();
+                if (
+                    lastScannedRef.current.code === decodedText &&
+                    now - lastScannedRef.current.time < 3500
+                ) {
+                    return;
+                }
+
+                lastScannedRef.current = { code: decodedText, time: now };
+
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);
+                }
+                playBeep();
+
+                processScan(decodedText);
+            };
+
+            const config = {
+                fps: 12,
+                qrbox: (viewfinderWidth, viewfinderHeight) => {
+                    const minDim = Math.min(viewfinderWidth, viewfinderHeight);
+                    return {
+                        width: Math.floor(minDim * 0.75),
+                        height: Math.floor(minDim * 0.75),
+                    };
+                },
+                aspectRatio: 1.0,
+            };
+
+            try {
+                await html5QrCode.start(
+                    { facingMode: 'environment' },
+                    config,
+                    qrCodeSuccessCallback,
+                    () => {}
+                );
+            } catch {
+                await html5QrCode.start(
+                    { facingMode: 'user' },
+                    config,
+                    qrCodeSuccessCallback,
+                    () => {}
+                );
+            }
+
+            setIsCameraActive(true);
+        } catch (err) {
+            console.error('Failed to start camera:', err);
+            setCameraError(
+                err?.message ||
+                'Unable to access camera. Please allow camera permissions in your browser or ensure you are using HTTPS.'
+            );
+            setIsCameraActive(false);
+        } finally {
+            setCameraStarting(false);
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            if (scannerRef.current) {
+                if (scannerRef.current.isScanning) {
+                    scannerRef.current.stop().catch(() => {});
+                }
+                scannerRef.current.clear();
+            }
+        };
+    }, []);
 
     // Keep scanner input focused for fast barcode / QR scanner wedge entry
     useEffect(() => {
@@ -166,19 +292,74 @@ export default function AdminAttendanceScanner({
                                 </span>
                             </div>
 
-                            {/* Viewfinder Graphic */}
-                            <div className="relative border-2 border-dashed border-indigo-500/40 rounded-2xl p-8 flex flex-col items-center justify-center bg-slate-900/60 min-h-[220px]">
+                            {/* Live Camera Viewfinder or Standby */}
+                            <div className="relative border-2 border-dashed border-indigo-500/40 rounded-2xl p-4 flex flex-col items-center justify-center bg-slate-900/80 min-h-[260px] overflow-hidden">
                                 {/* Corner Reticles */}
-                                <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg" />
-                                <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg" />
-                                <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg" />
-                                <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-indigo-400 rounded-br-lg" />
+                                <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg pointer-events-none z-10" />
+                                <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg pointer-events-none z-10" />
+                                <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg pointer-events-none z-10" />
+                                <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-indigo-400 rounded-br-lg pointer-events-none z-10" />
 
-                                <span className="text-4xl mb-3 animate-bounce">📷</span>
-                                <p className="font-bold text-sm text-white">Position Youth Digital Pass QR Code</p>
-                                <p className="text-xs text-slate-400 mt-1 max-w-xs text-center">
-                                    Point camera scanner or scan with handheld laser scanner.
-                                </p>
+                                {/* Camera viewport container */}
+                                <div
+                                    id="qr-reader-viewport"
+                                    className={`w-full max-w-sm rounded-xl overflow-hidden ${isCameraActive ? 'block' : 'hidden'}`}
+                                />
+
+                                {!isCameraActive && (
+                                    <div className="text-center space-y-3 py-4 z-10 animate-fadeIn">
+                                        <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-500/30">
+                                            <Camera className="w-8 h-8" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-sm text-white">Live Phone Camera Scanner</p>
+                                            <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                                                Tap below to turn on your phone's back camera and scan youth passes.
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={startCamera}
+                                            disabled={cameraStarting}
+                                            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-indigo-600/30 transition active:scale-95 disabled:opacity-50"
+                                        >
+                                            {cameraStarting ? (
+                                                <>
+                                                    <RefreshCw className="w-4 h-4 animate-spin" />
+                                                    <span>Opening Camera...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Camera className="w-4 h-4" />
+                                                    <span>Start Phone Camera</span>
+                                                </>
+                                            )}
+                                        </button>
+
+                                        {cameraError && (
+                                            <p className="text-xs text-rose-400 max-w-xs mx-auto pt-1">
+                                                ⚠️ {cameraError}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
+                                {isCameraActive && (
+                                    <div className="w-full flex items-center justify-between px-3 py-2 bg-slate-950/80 backdrop-blur-xs rounded-xl mt-3 border border-slate-800 z-10">
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            <span className="text-xs font-bold text-emerald-400">Scanner Live (Point at Pass)</span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={stopCamera}
+                                            className="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition active:scale-95"
+                                        >
+                                            <CameraOff className="w-3.5 h-3.5" />
+                                            <span>Stop Camera</span>
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Manual / Scanner Code Input Form */}

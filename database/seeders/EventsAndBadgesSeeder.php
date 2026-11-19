@@ -4,13 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Badge;
 use App\Models\Event;
-use App\Models\EventRegistration;
 use App\Models\SurveyResponse;
 use App\Models\User;
 use App\Models\UserBadge;
 use App\Models\YouthProfile;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class EventsAndBadgesSeeder extends Seeder
 {
@@ -161,7 +159,9 @@ class EventsAndBadgesSeeder extends Seeder
 
         $profiles = YouthProfile::with('user')->get();
         foreach ($profiles as $profile) {
-            if (!$profile->user_id) continue;
+            if (! $profile->user_id) {
+                continue;
+            }
 
             // Pioneer badge for verified or registered youth
             if ($pioneerBadge) {
@@ -195,4 +195,3 @@ class EventsAndBadgesSeeder extends Seeder
         }
     }
 }
-

@@ -88,7 +88,7 @@ class AdminEventController extends Controller
             'status' => 'required|in:draft,published,ongoing,completed',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']) . '-' . rand(100, 999);
+        $validated['slug'] = Str::slug($validated['title']).'-'.rand(100, 999);
         $validated['created_by'] = auth()->id();
 
         $event = Event::create($validated);
@@ -145,7 +145,7 @@ class AdminEventController extends Controller
                 ];
             });
 
-        $smsService = new SmsService();
+        $smsService = new SmsService;
 
         // Youth available to add to roster (not yet registered)
         $availableYouth = User::where('role', 'youth_member')
@@ -244,7 +244,7 @@ class AdminEventController extends Controller
 
         $event->update(['status' => $validated['status']]);
 
-        return back()->with('success', "Event status changed to " . strtoupper($validated['status']) . ".");
+        return back()->with('success', 'Event status changed to '.strtoupper($validated['status']).'.');
     }
 
     /**
@@ -347,7 +347,7 @@ class AdminEventController extends Controller
             }
         }
 
-        return back()->with('success', "Attendee status changed to " . strtoupper($newStatus) . ".");
+        return back()->with('success', 'Attendee status changed to '.strtoupper($newStatus).'.');
     }
 
     /**
@@ -398,4 +398,3 @@ class AdminEventController extends Controller
             ->with('success', "Event '{$title}' was successfully deleted.");
     }
 }
-

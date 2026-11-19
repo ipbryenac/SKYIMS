@@ -42,4 +42,3 @@ class SurveyResponse extends Model
         return $this->belongsTo(YouthProfile::class);
     }
 }
-

@@ -84,7 +84,7 @@ class YouthProfile extends Model
             get: function () {
                 $parts = array_filter([
                     $this->first_name,
-                    $this->middle_name ? substr($this->middle_name, 0, 1) . '.' : null,
+                    $this->middle_name ? substr($this->middle_name, 0, 1).'.' : null,
                     $this->last_name,
                     $this->suffix,
                 ]);
@@ -113,14 +113,21 @@ class YouthProfile extends Model
             get: function () {
                 $age = $this->age;
 
-                if ($age === null) return 'Unknown';
-                if ($age >= 15 && $age <= 17) return 'Child Youth (15-17)';
-                if ($age >= 18 && $age <= 24) return 'Core Youth (18-24)';
-                if ($age >= 25 && $age <= 30) return 'Young Adult (25-30)';
+                if ($age === null) {
+                    return 'Unknown';
+                }
+                if ($age >= 15 && $age <= 17) {
+                    return 'Child Youth (15-17)';
+                }
+                if ($age >= 18 && $age <= 24) {
+                    return 'Core Youth (18-24)';
+                }
+                if ($age >= 25 && $age <= 30) {
+                    return 'Young Adult (25-30)';
+                }
 
-                return 'Out of SK Age Range (' . $age . ')';
+                return 'Out of SK Age Range ('.$age.')';
             }
         );
     }
 }
-

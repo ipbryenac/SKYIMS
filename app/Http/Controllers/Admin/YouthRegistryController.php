@@ -25,12 +25,12 @@ class YouthRegistryController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('youth_code', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('email', 'like', "%{$search}%")
-                         ->orWhere('phone_number', 'like', "%{$search}%");
-                  });
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('youth_code', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('email', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -191,7 +191,7 @@ class YouthRegistryController extends Controller
      */
     public function export(Request $request): StreamedResponse
     {
-        $fileName = 'Katipunan_ng_Kabataan_Tibao_' . date('Y-m-d') . '.csv';
+        $fileName = 'Katipunan_ng_Kabataan_Tibao_'.date('Y-m-d').'.csv';
 
         return response()->streamDownload(function () {
             $handle = fopen('php://output', 'w');
@@ -253,4 +253,3 @@ class YouthRegistryController extends Controller
         ]);
     }
 }
-

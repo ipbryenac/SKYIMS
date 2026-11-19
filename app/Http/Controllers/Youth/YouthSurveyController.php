@@ -99,4 +99,3 @@ class YouthSurveyController extends Controller
         return back()->with('success', "Daghang Salamat! Your voice has been recorded and submitted to the SK Council. You earned +{$survey->xp_reward} Participation XP!");
     }
 }
-

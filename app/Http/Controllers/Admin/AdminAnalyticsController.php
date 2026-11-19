@@ -57,6 +57,7 @@ class AdminAnalyticsController extends Controller
 
         $interestsBreakdown = $interestsRaw->map(function ($item) use ($totalResponses, $interestColors) {
             $percentage = $totalResponses > 0 ? round(($item->count / $totalResponses) * 100, 1) : 0;
+
             return [
                 'name' => $item->primary_interest,
                 'count' => $item->count,
@@ -82,7 +83,7 @@ class AdminAnalyticsController extends Controller
 
         // 3. Purok / Sitio Distribution across Barangay Tibao
         $puroksList = [
-            'Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 'Purok 5', 'Purok 6', 'Purok 7', 'Sitio Crossing'
+            'Purok 1', 'Purok 2', 'Purok 3', 'Purok 4', 'Purok 5', 'Purok 6', 'Purok 7', 'Sitio Crossing',
         ];
 
         $purokData = [];
@@ -111,9 +112,13 @@ class AdminAnalyticsController extends Controller
         foreach ($allResponses as $resp) {
             $sched = $resp->answers[3] ?? null;
             if ($sched) {
-                if (str_contains($sched, 'Mornings')) $scheduleCounts['Saturday / Sunday Mornings']++;
-                elseif (str_contains($sched, 'Afternoons')) $scheduleCounts['Saturday / Sunday Afternoons']++;
-                elseif (str_contains($sched, 'Evenings')) $scheduleCounts['Weekday Evenings']++;
+                if (str_contains($sched, 'Mornings')) {
+                    $scheduleCounts['Saturday / Sunday Mornings']++;
+                } elseif (str_contains($sched, 'Afternoons')) {
+                    $scheduleCounts['Saturday / Sunday Afternoons']++;
+                } elseif (str_contains($sched, 'Evenings')) {
+                    $scheduleCounts['Weekday Evenings']++;
+                }
             }
         }
 
@@ -211,15 +216,15 @@ class AdminAnalyticsController extends Controller
 
         // Specific CBYDP Council Policy Guidance derived from Talents
         $talentRecommendations = [];
-        if (!empty($skillFrequencies)) {
+        if (! empty($skillFrequencies)) {
             $firstSkill = array_key_first($skillFrequencies);
             $talentRecommendations[] = [
                 'focus' => 'Livelihood & Technical Skills (CBYDP Center 2)',
                 'title' => "High concentration of {$firstSkill} talents",
-                'action' => "The SK Council can schedule specialized TESDA-accredited training or workshops at Barangay Tibao Hall to build economic independence.",
+                'action' => 'The SK Council can schedule specialized TESDA-accredited training or workshops at Barangay Tibao Hall to build economic independence.',
             ];
         }
-        if (!empty($hobbyFrequencies)) {
+        if (! empty($hobbyFrequencies)) {
             $firstHobby = array_key_first($hobbyFrequencies);
             $talentRecommendations[] = [
                 'focus' => 'Youth Engagement & Sports / Culture (CBYDP Center 4)',
@@ -263,7 +268,7 @@ class AdminAnalyticsController extends Controller
      */
     public function export(Request $request): StreamedResponse
     {
-        $fileName = 'Barangay_Tibao_Needs_Assessment_Analytics_' . date('Y-m-d') . '.csv';
+        $fileName = 'Barangay_Tibao_Needs_Assessment_Analytics_'.date('Y-m-d').'.csv';
 
         return response()->streamDownload(function () {
             $handle = fopen('php://output', 'w');
@@ -305,4 +310,3 @@ class AdminAnalyticsController extends Controller
         ]);
     }
 }
-

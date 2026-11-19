@@ -21,7 +21,7 @@ return new class extends Migration
             $table->uuid('ticket_token')->unique();
 
             $table->enum('status', ['registered', 'attended', 'cancelled', 'no_show'])
-                  ->default('registered');
+                ->default('registered');
 
             $table->timestamps();
 
@@ -57,4 +57,3 @@ return new class extends Migration
         Schema::dropIfExists('event_registrations');
     }
 };
-

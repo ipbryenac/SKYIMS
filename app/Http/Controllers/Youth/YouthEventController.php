@@ -129,4 +129,3 @@ class YouthEventController extends Controller
         return back()->with('success', "Your registration for {$event->title} has been cancelled.");
     }
 }
-
