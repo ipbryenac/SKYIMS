@@ -6,6 +6,13 @@ echo "==> Configuring Apache to listen on port ${PORT}..."
 echo "Listen ${PORT}" > /etc/apache2/ports.conf
 sed -i "s/<VirtualHost \*:.*>/<VirtualHost \*:${PORT}>/g" /etc/apache2/sites-available/*.conf
 
+# Validate APP_KEY (Render's generateValue creates a 64-char string that breaks Laravel's 32-byte AES-256 cipher)
+if [ -z "$APP_KEY" ] || [ "${APP_KEY:0:7}" != "base64:" -a ${#APP_KEY} -ne 32 ]; then
+    echo "==> APP_KEY missing or invalid for AES-256 (${#APP_KEY} chars). Generating valid Laravel base64 key..."
+    APP_KEY=$(php artisan key:generate --show)
+    export APP_KEY
+fi
+
 # Setup SQLite if using sqlite connection
 if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
     DB_PATH="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
@@ -16,6 +23,7 @@ if [ "${DB_CONNECTION:-sqlite}" = "sqlite" ]; then
         touch "$DB_PATH"
     fi
     chown -R www-data:www-data "$(dirname "$DB_PATH")"
+    chmod -R 775 "$(dirname "$DB_PATH")"
     chmod 664 "$DB_PATH" || true
 fi
 
@@ -29,23 +37,13 @@ chmod -R 775 storage bootstrap/cache
 echo "==> Linking storage for public uploads..."
 php artisan storage:link --force || true
 
-# Check / Generate APP_KEY if missing
-if [ -z "$APP_KEY" ]; then
-    echo "==> Generating application encryption key..."
-    php artisan key:generate --force
-fi
-
 # Run database migrations
 echo "==> Running database migrations..."
 php artisan migrate --force
 
-# Seed database if users table is empty (perfect for presentation setup)
-echo "==> Checking database seeding..."
-USER_COUNT=$(php artisan tinker --execute 'echo App\Models\User::count();' 2>/dev/null || echo "0")
-if [ "$USER_COUNT" = "0" ]; then
-    echo "==> Database is empty. Seeding presentation demo data..."
-    php artisan db:seed --force
-fi
+# Seed database with presentation demo data (fully idempotent using updateOrCreate)
+echo "==> Seeding presentation demo data..."
+php artisan db:seed --force
 
 # Clear and cache configurations for optimal performance
 echo "==> Optimizing configurations and routes..."
