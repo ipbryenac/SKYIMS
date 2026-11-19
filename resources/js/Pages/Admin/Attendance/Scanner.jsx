@@ -19,6 +19,7 @@ export default function AdminAttendanceScanner({
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [cameraStarting, setCameraStarting] = useState(false);
     const [cameraError, setCameraError] = useState(null);
+    const [cameraFacing, setCameraFacing] = useState('environment'); // 'environment' | 'user'
     const inputRef = useRef(null);
     const scannerRef = useRef(null);
     const lastScannedRef = useRef({ code: '', time: 0 });
@@ -59,13 +60,20 @@ export default function AdminAttendanceScanner({
         setCameraStarting(false);
     };
 
-    const startCamera = async () => {
+    const startCamera = async (facing = cameraFacing) => {
         setCameraError(null);
         setCameraStarting(true);
+        // Step 1: Immediately activate container in DOM so it has real clientWidth & clientHeight
+        setIsCameraActive(true);
+
+        // Step 2: Yield to browser rendering loop to ensure DOM layout has calculated container dimensions
+        await new Promise((resolve) => setTimeout(resolve, 150));
 
         try {
             if (scannerRef.current) {
                 await stopCamera();
+                setIsCameraActive(true);
+                await new Promise((resolve) => setTimeout(resolve, 100));
             }
 
             const html5QrCode = new Html5Qrcode('qr-reader-viewport');
@@ -91,44 +99,78 @@ export default function AdminAttendanceScanner({
             };
 
             const config = {
-                fps: 12,
+                fps: 15,
                 qrbox: (viewfinderWidth, viewfinderHeight) => {
-                    const minDim = Math.min(viewfinderWidth, viewfinderHeight);
+                    const minDim = Math.min(viewfinderWidth || 300, viewfinderHeight || 300);
+                    const size = Math.max(Math.floor(minDim * 0.75), 200);
                     return {
-                        width: Math.floor(minDim * 0.75),
-                        height: Math.floor(minDim * 0.75),
+                        width: size,
+                        height: size,
                     };
                 },
                 aspectRatio: 1.0,
+                disableFlip: false,
             };
+
+            const cameraConfig = facing === 'user' ? { facingMode: 'user' } : { facingMode: 'environment' };
 
             try {
                 await html5QrCode.start(
-                    { facingMode: 'environment' },
+                    cameraConfig,
                     config,
                     qrCodeSuccessCallback,
                     () => {}
                 );
-            } catch {
+            } catch (primaryErr) {
+                console.warn('Primary camera mode failed, attempting fallback camera:', primaryErr);
+                const fallbackFacing = facing === 'user' ? 'environment' : 'user';
                 await html5QrCode.start(
-                    { facingMode: 'user' },
+                    { facingMode: fallbackFacing },
                     config,
                     qrCodeSuccessCallback,
                     () => {}
                 );
+                setCameraFacing(fallbackFacing);
             }
 
-            setIsCameraActive(true);
+            // Step 3: Patch video element specifically for iOS Safari WebKit inline playback
+            const patchVideoElement = () => {
+                const video = document.querySelector('#qr-reader-viewport video');
+                if (video) {
+                    video.setAttribute('playsinline', 'true');
+                    video.setAttribute('webkit-playsinline', 'true');
+                    video.setAttribute('muted', 'true');
+                    video.setAttribute('autoplay', 'true');
+                    video.style.width = '100%';
+                    video.style.height = '100%';
+                    video.style.objectFit = 'cover';
+                    video.style.borderRadius = '1rem';
+                    video.style.display = 'block';
+                    video.play().catch(() => {});
+                }
+            };
+
+            patchVideoElement();
+            setTimeout(patchVideoElement, 200);
+            setTimeout(patchVideoElement, 600);
+
         } catch (err) {
             console.error('Failed to start camera:', err);
             setCameraError(
                 err?.message ||
-                'Unable to access camera. Please allow camera permissions in your browser or ensure you are using HTTPS.'
+                'Unable to access camera. Please allow camera permissions in Safari / Chrome settings or check if another app is using the camera.'
             );
             setIsCameraActive(false);
         } finally {
             setCameraStarting(false);
         }
+    };
+
+    const flipCamera = async () => {
+        const nextFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+        setCameraFacing(nextFacing);
+        await stopCamera();
+        await startCamera(nextFacing);
     };
 
     useEffect(() => {
@@ -292,36 +334,63 @@ export default function AdminAttendanceScanner({
                                 </span>
                             </div>
 
+                            {/* Scoped CSS to ensure Html5Qrcode video expands properly on all mobile viewports & iOS Safari */}
+                            <style>{`
+                                #qr-reader-viewport {
+                                    width: 100% !important;
+                                    max-width: 360px !important;
+                                    min-height: 280px !important;
+                                    aspect-ratio: 1 / 1 !important;
+                                    position: relative !important;
+                                    background-color: #000000 !important;
+                                    border-radius: 1.25rem !important;
+                                    border: none !important;
+                                    overflow: hidden !important;
+                                }
+                                #qr-reader-viewport video {
+                                    width: 100% !important;
+                                    height: 100% !important;
+                                    min-height: 280px !important;
+                                    object-fit: cover !important;
+                                    border-radius: 1.25rem !important;
+                                    display: block !important;
+                                }
+                                #qr-reader-viewport canvas {
+                                    display: none !important;
+                                }
+                                #qr-reader-viewport #qr-shaded-region {
+                                    border-radius: 1.25rem !important;
+                                }
+                                #qr-reader-viewport img[alt="Info icon"] {
+                                    display: none !important;
+                                }
+                            `}</style>
+
                             {/* Live Camera Viewfinder or Standby */}
-                            <div className="relative border-2 border-dashed border-indigo-500/40 rounded-2xl p-4 flex flex-col items-center justify-center bg-slate-900/80 min-h-[260px] overflow-hidden">
+                            <div className="relative border-2 border-dashed border-indigo-500/40 rounded-3xl p-4 flex flex-col items-center justify-center bg-slate-900/90 min-h-[320px] overflow-hidden">
                                 {/* Corner Reticles */}
-                                <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg pointer-events-none z-10" />
-                                <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg pointer-events-none z-10" />
-                                <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg pointer-events-none z-10" />
-                                <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-indigo-400 rounded-br-lg pointer-events-none z-10" />
+                                <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-indigo-400 rounded-tl-lg pointer-events-none z-20" />
+                                <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-indigo-400 rounded-tr-lg pointer-events-none z-20" />
+                                <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-indigo-400 rounded-bl-lg pointer-events-none z-20" />
+                                <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-indigo-400 rounded-br-lg pointer-events-none z-20" />
 
-                                {/* Camera viewport container */}
-                                <div
-                                    id="qr-reader-viewport"
-                                    className={`w-full max-w-sm rounded-xl overflow-hidden ${isCameraActive ? 'block' : 'hidden'}`}
-                                />
-
+                                {/* Standby UI (shown when camera is OFF) */}
                                 {!isCameraActive && (
-                                    <div className="text-center space-y-3 py-4 z-10 animate-fadeIn">
+                                    <div className="text-center space-y-3 py-6 z-10 animate-fadeIn">
                                         <div className="w-16 h-16 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-500/30">
                                             <Camera className="w-8 h-8" />
                                         </div>
                                         <div>
                                             <p className="font-bold text-sm text-white">Live Phone Camera Scanner</p>
                                             <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-                                                Tap below to turn on your phone's back camera and scan youth passes.
+                                                Tap below to open your phone camera and scan youth QR passes.
                                             </p>
                                         </div>
                                         <button
                                             type="button"
-                                            onClick={startCamera}
+                                            onClick={() => startCamera(cameraFacing)}
                                             disabled={cameraStarting}
-                                            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-lg shadow-indigo-600/30 transition active:scale-95 disabled:opacity-50"
+                                            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl text-xs shadow-lg shadow-indigo-600/30 transition active:scale-95 disabled:opacity-50"
                                         >
                                             {cameraStarting ? (
                                                 <>
@@ -337,27 +406,49 @@ export default function AdminAttendanceScanner({
                                         </button>
 
                                         {cameraError && (
-                                            <p className="text-xs text-rose-400 max-w-xs mx-auto pt-1">
+                                            <p className="text-xs text-rose-400 max-w-xs mx-auto pt-1 font-medium">
                                                 ⚠️ {cameraError}
                                             </p>
                                         )}
                                     </div>
                                 )}
 
+                                {/* Camera Viewport Container (keeps element mounted for Html5Qrcode) */}
+                                <div
+                                    id="qr-reader-viewport"
+                                    className={`w-full max-w-sm aspect-square min-h-[280px] rounded-2xl overflow-hidden bg-black relative flex items-center justify-center ${
+                                        isCameraActive ? 'block' : 'hidden'
+                                    }`}
+                                />
+
+                                {/* Active Camera Bar Controls */}
                                 {isCameraActive && (
-                                    <div className="w-full flex items-center justify-between px-3 py-2 bg-slate-950/80 backdrop-blur-xs rounded-xl mt-3 border border-slate-800 z-10">
+                                    <div className="w-full max-w-sm flex items-center justify-between px-3.5 py-2.5 bg-slate-950/90 backdrop-blur-xs rounded-xl mt-3 border border-slate-800 z-20">
                                         <div className="flex items-center gap-2">
                                             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                                            <span className="text-xs font-bold text-emerald-400">Scanner Live (Point at Pass)</span>
+                                            <span className="text-xs font-bold text-emerald-400">
+                                                {cameraFacing === 'user' ? 'Front Camera Live' : 'Back Camera Live'}
+                                            </span>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={stopCamera}
-                                            className="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition active:scale-95"
-                                        >
-                                            <CameraOff className="w-3.5 h-3.5" />
-                                            <span>Stop Camera</span>
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={flipCamera}
+                                                className="inline-flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-2.5 py-1.5 rounded-lg text-xs transition active:scale-95 border border-slate-700"
+                                                title="Switch between front and back camera"
+                                            >
+                                                <RefreshCw className="w-3.5 h-3.5" />
+                                                <span className="hidden sm:inline">Flip</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={stopCamera}
+                                                className="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition active:scale-95"
+                                            >
+                                                <CameraOff className="w-3.5 h-3.5" />
+                                                <span>Stop</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                             </div>
