@@ -37,6 +37,19 @@ chmod -R 775 storage bootstrap/cache
 echo "==> Linking storage for public uploads..."
 php artisan storage:link --force || true
 
+# Wait for database if using external connection (e.g. pgsql)
+if [ "${DB_CONNECTION:-sqlite}" != "sqlite" ]; then
+    echo "==> Verifying database connection (${DB_CONNECTION})..."
+    for i in $(seq 1 15); do
+        if php artisan db:monitor > /dev/null 2>&1; then
+            echo "==> Database connection verified!"
+            break
+        fi
+        echo "    Waiting for database to be ready ($i/15)..."
+        sleep 2
+    done
+fi
+
 # Run database migrations
 echo "==> Running database migrations..."
 php artisan migrate --force
