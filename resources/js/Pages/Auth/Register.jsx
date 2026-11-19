@@ -70,6 +70,8 @@ export default function Register({
     const [customHobbyInput, setCustomHobbyInput] = useState('');
     const [selectedIdCategory, setSelectedIdCategory] = useState(idTypes[0] || 'Student ID (School / College ID)');
     const [customIdType, setCustomIdType] = useState('');
+    const [idPhotoPreview, setIdPhotoPreview] = useState(null);
+    const [idPhotoIsPdf, setIdPhotoIsPdf] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         // Step 1: Account & Contact
@@ -190,6 +192,43 @@ export default function Register({
         setData('hobbies', currentHobbies.filter((h) => h !== hobby).join(', '));
     };
 
+    const handlePhotoChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+            clearSelectedPhoto();
+            return;
+        }
+
+        if (file.size > 20 * 1024 * 1024) {
+            setClientErrors((prev) => ({ ...prev, id_photo: 'The selected file exceeds 20MB. Please choose a smaller file.' }));
+            return;
+        }
+
+        setClientErrors((prev) => {
+            const next = { ...prev };
+            delete next.id_photo;
+            return next;
+        });
+
+        setData('id_photo', file);
+
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+            setIdPhotoIsPdf(true);
+            setIdPhotoPreview(file.name);
+        } else {
+            setIdPhotoIsPdf(false);
+            setIdPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const clearSelectedPhoto = () => {
+        setData('id_photo', null);
+        setIdPhotoPreview(null);
+        setIdPhotoIsPdf(false);
+        const input = document.getElementById('id_photo');
+        if (input) input.value = '';
+    };
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -205,7 +244,7 @@ export default function Register({
         }
 
         post(route('register'), {
-            forceFormData: true,
+            forceFormData: data.id_photo instanceof File,
             onError: (err) => {
                 if (Object.keys(err).some((k) => step1Fields.includes(k))) {
                     setStep(1);
@@ -833,15 +872,51 @@ export default function Register({
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="id_photo" value="Upload Photo Proof" />
+                                    <InputLabel htmlFor="id_photo" value="Upload Photo Proof / Valid ID (Max 20MB)" />
+                                    <p className="text-[11px] text-slate-500 mb-1.5">
+                                        Optional: Attach a clear photo or PDF scan of your ID/document.
+                                    </p>
                                     <input
                                         id="id_photo"
                                         type="file"
-                                        accept="image/*"
-                                        onChange={(e) => setData('id_photo', e.target.files[0])}
-                                        className="mt-1 block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700"
+                                        accept="image/jpeg,image/png,image/webp,image/jpg,.pdf,application/pdf"
+                                        onChange={handlePhotoChange}
+                                        className="mt-1 block w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer"
                                     />
                                     <InputError message={allErrors.id_photo} className="mt-1" />
+
+                                    {idPhotoPreview && (
+                                        <div className="mt-2.5 p-2.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3 animate-fadeIn">
+                                            <div className="flex items-center gap-2.5 min-w-0">
+                                                {idPhotoIsPdf ? (
+                                                    <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 font-extrabold text-[10px] flex items-center justify-center shrink-0">
+                                                        PDF
+                                                    </div>
+                                                ) : (
+                                                    <img
+                                                        src={idPhotoPreview}
+                                                        alt="ID Preview"
+                                                        className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0"
+                                                    />
+                                                )}
+                                                <div className="min-w-0">
+                                                    <p className="text-xs font-bold text-slate-800 truncate">
+                                                        {data.id_photo?.name || 'Uploaded document'}
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-500">
+                                                        {data.id_photo?.size ? `${(data.id_photo.size / (1024 * 1024)).toFixed(2)} MB` : ''}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={clearSelectedPhoto}
+                                                className="text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1.5 rounded-xl transition shrink-0"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

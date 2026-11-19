@@ -166,7 +166,7 @@ class YouthProfileController extends Controller
             'middle_name' => 'nullable|string|max:100',
             'last_name' => 'required|string|max:100',
             'suffix' => 'nullable|string|max:10',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'phone_number' => 'required|string|max:20',
             'gender' => 'required|in:Male,Female,Prefer not to say',
             'birthdate' => 'required|date',
@@ -181,7 +181,7 @@ class YouthProfileController extends Controller
             'is_registered_national_voter' => 'boolean',
             'voted_last_sk_election' => 'boolean',
             'id_type' => 'nullable|string|max:100',
-            'id_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'id_photo' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf,heic|max:20480',
             'current_password' => 'nullable|required_with:new_password',
             'new_password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
@@ -193,7 +193,7 @@ class YouthProfileController extends Controller
         $user->phone_number = $request->phone_number;
 
         if ($request->filled('new_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
+            if (! Hash::check($request->current_password, $user->password)) {
                 return back()->withErrors(['current_password' => 'Your current password does not match our records.']);
             }
             $user->password = Hash::make($request->new_password);
@@ -236,7 +236,7 @@ class YouthProfileController extends Controller
             $profile->update($profileData);
         } else {
             $profileData['user_id'] = $user->id;
-            $profileData['youth_code'] = 'TIBAO-' . date('Y') . '-' . str_pad($user->id, 5, '0', STR_PAD_LEFT);
+            $profileData['youth_code'] = 'TIBAO-'.date('Y').'-'.str_pad($user->id, 5, '0', STR_PAD_LEFT);
             $profileData['verification_status'] = 'pending';
             $profileData['xp_points'] = 25;
             YouthProfile::create($profileData);

@@ -29,7 +29,7 @@ fi
 
 # Ensure storage directories and permissions
 echo "==> Setting up storage permissions..."
-mkdir -p storage/framework/{sessions,views,cache} storage/logs storage/app/public
+mkdir -p storage/framework/{sessions,views,cache} storage/logs storage/app/public/id_proofs
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 

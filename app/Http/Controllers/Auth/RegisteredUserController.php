@@ -106,6 +106,10 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->input('id_photo') === 'null' || $request->input('id_photo') === 'undefined' || ! $request->hasFile('id_photo')) {
+            $request->request->remove('id_photo');
+        }
+
         $validated = $request->validate([
             // Account Credentials
             'first_name' => 'required|string|max:100',
@@ -139,7 +143,7 @@ class RegisteredUserController extends Controller
 
             // Verification ID proof
             'id_type' => 'nullable|string|max:100',
-            'id_photo' => 'nullable|image|max:5120', // Max 5MB
+            'id_photo' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf,heic|max:20480', // Max 20MB
         ], [
             'first_name.required' => 'First name is required.',
             'last_name.required' => 'Last name is required.',
@@ -149,6 +153,8 @@ class RegisteredUserController extends Controller
             'birthdate.required' => 'Date of birth is required to determine your youth age bracket.',
             'birthdate.before' => 'Birthdate must be a valid past date.',
             'purok_sitio.required' => 'Please select your Purok / Sitio in Barangay Tibao.',
+            'id_photo.max' => 'The uploaded ID file must not exceed 20MB.',
+            'id_photo.mimes' => 'The ID must be a valid image (JPEG, PNG, WEBP) or PDF document.',
         ]);
 
         $createdData = DB::transaction(function () use ($request, $validated) {
