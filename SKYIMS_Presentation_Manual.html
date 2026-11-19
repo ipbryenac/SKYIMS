@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKYIMS - Official Presentation Manual & System Guide</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm 16mm 18mm 16mm;
+        }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            color: #1e293b;
+            background-color: #ffffff;
+            line-height: 1.55;
+            font-size: 10pt;
+            margin: 0;
+            padding: 24px;
+        }
+        .header-banner {
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+        .header-meta {
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        h1 {
+            color: #0f172a;
+            font-size: 20pt;
+            font-weight: 900;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
+        }
+        .tagline {
+            color: #2563eb;
+            font-size: 10pt;
+            font-weight: 600;
+            font-style: italic;
+            margin: 0;
+        }
+        h2 {
+            color: #1e3a8a;
+            font-size: 13pt;
+            font-weight: 800;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-top: 22px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #0f172a;
+            font-size: 11pt;
+            font-weight: 700;
+            margin-top: 14px;
+            margin-bottom: 4px;
+            page-break-after: avoid;
+        }
+        p {
+            margin: 0 0 8px 0;
+            color: #334155;
+        }
+        ul, ol {
+            margin: 0 0 10px 0;
+            padding-left: 20px;
+            color: #334155;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        .feature-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+        .feature-title {
+            font-size: 10.5pt;
+            font-weight: 800;
+            color: #1e3a8a;
+            margin-bottom: 4px;
+        }
+        .feature-desc {
+            font-size: 9pt;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 9pt;
+            page-break-inside: avoid;
+        }
+        .table-custom th {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-weight: 700;
+            text-align: left;
+            padding: 8px 10px;
+            border: 1px solid #0f172a;
+        }
+        .table-custom td {
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+        }
+        .table-custom tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .alert-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 12px 0;
+            font-size: 9pt;
+            color: #1e40af;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 14px 0 18px 0;
+            page-break-inside: avoid;
+        }
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .badge {
+            display: inline-block;
+            font-size: 7.5pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 9999px;
+            margin-right: 4px;
+        }
+        .badge-blue { background-color: #dbeafe; color: #1e40af; }
+        .badge-green { background-color: #dcfce7; color: #166534; }
+        .badge-purple { background-color: #f3e8ff; color: #6b21a8; }
+        .badge-amber { background-color: #fef3c7; color: #92400e; }
+        .script-step {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            page-break-inside: avoid;
+        }
+        .script-step-num {
+            font-weight: 800;
+            color: #2563eb;
+            font-size: 10pt;
+            margin-bottom: 2px;
+        }
+        .quote-say {
+            background-color: #f1f5f9;
+            border-left: 3px solid #64748b;
+            padding: 6px 10px;
+            font-style: italic;
+            font-size: 9pt;
+            color: #334155;
+            margin: 4px 0;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            body { padding: 0; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div class="header-banner">
+        <div class="header-meta">Republic of the Philippines • Sangguniang Kabataan • Barangay Tibao</div>
+        <h1>SKYIMS: Sangguniang Kabataan Youth Information Management System</h1>
+        <p class="tagline">"Empowering Barangay Youth Through Modern Digital Governance, Real-Time Community Engagement, and Data-Driven Decision Making."</p>
+    </div>
+
+    <!-- Executive Summary -->
+    <h2>1. Executive Summary & Purpose</h2>
+    <p>The <strong>Sangguniang Kabataan Youth Information Management System (SKYIMS)</strong> is an all-in-one digital platform created specifically for Barangay youth councils (Sangguniang Kabataan) and Katipunan ng Kabataan (KK) members.</p>
+    <p>In traditional barangay governance, youth profiling and event management rely heavily on manual paper sign-up sheets, physical logbooks, personal SMS blasting, and paper survey forms. This approach causes lost records, long queues during assemblies, inaccurate attendance counts, and delays in planning youth budgets.</p>
+    <p><strong>SKYIMS solves these problems through two dedicated user experiences:</strong></p>
+    <ul>
+        <li><strong>For Barangay Youth (Ages 15–30):</strong> Provides an instant digital Katipunan ng Kabataan membership card with an encrypted QR code, 1-click event RSVP, experience points (XP) and digital achievement badges for volunteerism, and mobile-friendly community surveys.</li>
+        <li><strong>For SK Council Officials:</strong> Eliminates paper attendance logbooks using any smartphone camera as a contactless gate scanner, enables targeted SMS text broadcasts, maintains a verified master registry, and automatically produces live visual graphs for council budgeting and DILG compliance.</li>
+    </ul>
+
+    <!-- Diagram 1: System Ecosystem -->
+    <h2>2. System Architecture & Stakeholder Ecosystem</h2>
+    <p>The diagram below illustrates how Barangay Youth and SK Officials interact through the unified SKYIMS central platform:</p>
+    
+    <div class="diagram-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 320" width="850" height="320">
+            <defs>
+                <linearGradient id="gradYouth" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0284c7" />
+                    <stop offset="100%" stop-color="#0369a1" />
+                </linearGradient>
+                <linearGradient id="gradAdmin" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4f46e5" />
+                    <stop offset="100%" stop-color="#3730a3" />
+                </linearGradient>
+                <linearGradient id="gradCore" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0f172a" />
+                    <stop offset="100%" stop-color="#1e293b" />
+                </linearGradient>
+                <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.15"/>
+                </filter>
+            </defs>
+
+            <!-- Background canvas -->
+            <rect width="850" height="320" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
+
+            <!-- Youth Node (Top Left) -->
+            <g transform="translate(30, 25)" filter="url(#shadow)">
+                <rect width="320" height="125" rx="12" fill="url(#gradYouth)" />
+                <text x="20" y="30" fill="#ffffff" font-weight="bold" font-size="14" font-family="'Segoe UI', sans-serif">KATIPUNAN NG KABATAAN (YOUTH)</text>
+                <text x="20" y="48" fill="#bae6fd" font-size="10.5" font-family="'Segoe UI', sans-serif">Barangay Residents Aged 15–30 Years Old</text>
+                <line x1="20" y1="56" x2="300" y2="56" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+                <text x="20" y="74" fill="#ffffff" font-size="10" font-family="'Segoe UI', sans-serif">• Self-Registration &amp; Valid ID Document Upload</text>
+                <text x="20" y="90" fill="#ffffff" font-size="10" font-family="'Segoe UI', sans-serif">• Digital KK Membership Pass &amp; Interactive QR</text>
+                <text x="20" y="106" fill="#ffffff" font-size="10" font-family="'Segoe UI', sans-serif">• 1-Click Event Joining, XP Points &amp; Badges</text>
+            </g>
+
+            <!-- SK Officials Node (Bottom Left) -->
+            <g transform="translate(30, 170)" filter="url(#shadow)">
+                <rect width="320" height="125" rx="12" fill="url(#gradAdmin)" />
+                <text x="20" y="30" fill="#ffffff" font-weight="bold" font-size="14" font-family="'Segoe UI', sans-serif">SK COUNCIL OFFICIALS &amp; ADMIN</text>
+                <text x="20" y="48" fill="#c7d2fe" font-size="10.5" font-family="'Segoe UI', sans-serif">Chairperson, Kagawads, Secretary, Treasurer</text>
+                <line x1="20" y1="56" x2="300" y2="56" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+                <text x="20" y="74" fill="#ffffff" font-size="10" font-family="'Segoe UI', sans-serif">• ID Verification Queue &amp; Masterlist CRM</text>
+                <text x="20" y="90" fill="#ffffff" font-size="10" font-family="'Segoe UI', sans-serif">• Smartphone Camera QR Gate Scanner Terminal</text>
+                <text x="20" y="106" fill="#ffffff" font-size="10" font-family="'Segoe UI', sans-serif">• Targeted SMS Broadcast &amp; Real-Time Analytics</text>
+            </g>
+
+            <!-- Connecting Arrows -->
+            <!-- Youth to Core -->
+            <path d="M 350,87 L 450,130" stroke="#0284c7" stroke-width="3" fill="none" stroke-linecap="round" marker-end="url(#arrow)" />
+            <!-- Admin to Core -->
+            <path d="M 350,232 L 450,190" stroke="#4f46e5" stroke-width="3" fill="none" stroke-linecap="round" />
+
+            <!-- Core Platform Node (Right) -->
+            <g transform="translate(460, 25)" filter="url(#shadow)">
+                <rect width="360" height="270" rx="14" fill="url(#gradCore)" stroke="#334155" stroke-width="1.5" />
+                
+                <rect x="20" y="18" width="130" height="20" rx="10" fill="#10b981" fill-opacity="0.2" />
+                <text x="28" y="32" fill="#34d399" font-weight="bold" font-size="9" font-family="'Segoe UI', sans-serif">CENTRAL PLATFORM</text>
+
+                <text x="20" y="58" fill="#ffffff" font-weight="900" font-size="16" font-family="'Segoe UI', sans-serif">SKYIMS CLOUD ENGINE</text>
+                <text x="20" y="76" fill="#94a3b8" font-size="10" font-family="'Segoe UI', sans-serif">Unified Katipunan ng Kabataan Databank</text>
+                
+                <line x1="20" y1="88" x2="340" y2="88" stroke="#334155" stroke-width="1" />
+
+                <!-- Pillar 1 -->
+                <rect x="20" y="100" width="320" height="36" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1" />
+                <text x="32" y="116" fill="#38bdf8" font-weight="bold" font-size="10" font-family="'Segoe UI', sans-serif">1. Contactless QR Attendance &amp; Security</text>
+                <text x="32" y="129" fill="#94a3b8" font-size="8.5" font-family="'Segoe UI', sans-serif">Prevents double check-ins; auto-credits XP; walk-in search</text>
+
+                <!-- Pillar 2 -->
+                <rect x="20" y="144" width="320" height="36" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1" />
+                <text x="32" y="160" fill="#a78bfa" font-weight="bold" font-size="10" font-family="'Segoe UI', sans-serif">2. Targeted SMS Broadcast Pipeline</text>
+                <text x="32" y="173" fill="#94a3b8" font-size="8.5" font-family="'Segoe UI', sans-serif">Filters by Purok/Sitio; Semaphore live gateway &amp; simulator</text>
+
+                <!-- Pillar 3 -->
+                <rect x="20" y="188" width="320" height="36" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1" />
+                <text x="32" y="204" fill="#34d399" font-weight="bold" font-size="10" font-family="'Segoe UI', sans-serif">3. Real-Time Demographics &amp; Analytics</text>
+                <text x="32" y="217" fill="#94a3b8" font-size="8.5" font-family="'Segoe UI', sans-serif">Purok maps, education, jobs; 1-click Excel/CSV export</text>
+
+                <!-- Footer Pill -->
+                <text x="20" y="248" fill="#64748b" font-weight="bold" font-size="8.5" font-family="'Segoe UI', sans-serif">RA 10742 (SK Reform Act) Compliant • COA Audit Ready</text>
+            </g>
+        </svg>
+    </div>
+
+    <!-- User Roles Table -->
+    <h2>3. Who Uses the System? (Stakeholder Matrix)</h2>
+    <table class="table-custom">
+        <thead>
+            <tr>
+                <th style="width: 28%;">User Role</th>
+                <th style="width: 27%;">Target Group</th>
+                <th>Core Responsibilities &amp; Capabilities</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Katipunan ng Kabataan (KK) Youth Members</strong></td>
+                <td>Barangay youth residents aged 15–30</td>
+                <td>
+                    • Self-register online and upload valid ID / school card proof.<br>
+                    • Access their personal Digital QR Membership Card on mobile.<br>
+                    • Browse barangay programs and register with 1 click.<br>
+                    • Earn Experience Points (XP) and digital achievement badges.<br>
+                    • Answer Needs Assessment surveys to voice community priorities.
+                </td>
+            </tr>
+            <tr>
+                <td><strong>SK Council Officials &amp; Officers</strong></td>
+                <td>SK Chairperson, Kagawads, Secretary, Treasurer</td>
+                <td>
+                    • Review submitted ID proofs in the ID Verification Queue.<br>
+                    • Turn smartphone camera into an on-site QR attendance gate scanner.<br>
+                    • Dispatch targeted SMS alerts and announcements (by Purok or event).<br>
+                    • Organize events aligned with the 9 CBYDP youth centers.<br>
+                    • View live demographic charts and export official reports to Excel.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- Feature Walkthrough Section -->
+    <h2>4. Detailed Plain-English Feature Manual</h2>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 1: Online Youth Registration &amp; Digital Profiling</div>
+        <div class="feature-desc">A modern, mobile-friendly online portal allowing barangay youth to register their official Katipunan ng Kabataan membership from any smartphone or computer.</div>
+        <ul>
+            <li><strong>Personal Demographics:</strong> Captures full name, birthdate, gender, civil status, and contact phone number.</li>
+            <li><strong>Purok &amp; Sitio Mapping:</strong> Automatically categorizes residents into their respective zones (Purok 1 through 7, Sitio Crossing).</li>
+            <li><strong>Youth Sector Classification:</strong> Records whether the youth is In-School, Out-of-School, Working, or with Specific Needs.</li>
+            <li><strong>Voter Demographics:</strong> Tracks registered SK voters and National election voters for civic engagement monitoring.</li>
+            <li><strong>ID Document Upload:</strong> Supports camera photo uploads or PDF documents of student IDs, government IDs, or Barangay Certificates up to 20MB.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 2: ID Verification Queue (Fraud Prevention &amp; Trust)</div>
+        <div class="feature-desc">An administrative security room that ensures only legitimate barangay residents are verified into the Katipunan ng Kabataan master databank.</div>
+        <ul>
+            <li><strong>Instant Document Preview:</strong> SK officials can view uploaded ID photos and documents directly on screen.</li>
+            <li><strong>1-Click Approval:</strong> Officials can click "Verify" to approve the member or "Reject" with helpful feedback if an ID image is unreadable.</li>
+            <li><strong>Verification Badges:</strong> Approved youth immediately receive a green verified seal on their digital card.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 3: Digital KK Membership Card &amp; Contactless QR Pass</div>
+        <div class="feature-desc">A tamper-proof digital identification pass stored securely on the youth member's smartphone.</div>
+        <ul>
+            <li><strong>Unique Youth Code:</strong> Every youth is assigned an official lifelong code (e.g., <code>TIBAO-2026-00001</code>).</li>
+            <li><strong>Interactive QR Code:</strong> Displays an encrypted QR code ready for instant scanning at any barangay entrance.</li>
+            <li><strong>Offline Friendly:</strong> Youth can screenshot their digital pass or print it once; the camera scanner will read it just as fast.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 4: Event &amp; Program Management (NYC 9 Centers)</div>
+        <div class="feature-desc">A centralized planning dashboard for scheduling youth seminars, athletic tournaments, tree plantings, and leadership summits.</div>
+        <ul>
+            <li><strong>Aligned with National Policy:</strong> Events are categorized under the 9 National Youth Commission (NYC) Centers of Participation (Governance, Health, Education, Climate Action, Sports, etc.).</li>
+            <li><strong>Capacity Tracking:</strong> Tracks total slots, registered attendees, and walk-ins in real time.</li>
+            <li><strong>1-Click RSVP:</strong> Youth can view event mechanics and register with a single tap.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 5: Smartphone Camera QR Scanner (Gate Admission)</div>
+        <div class="feature-desc">Turns any official's smartphone camera into an ultra-fast, contactless barcode scanner at the Barangay Gym entrance.</div>
+        <ul>
+            <li><strong>Camera Support:</strong> Automatically connects to the phone's back camera with a 1-tap "Flip Camera" toggle for selfie cameras.</li>
+            <li><strong>Audio &amp; Vibration Feedback:</strong> Vibrates the phone and chimes on every scan so officials know attendance is logged without looking down.</li>
+            <li><strong>Duplicate Check-In Protection:</strong> Instantly alerts officials if a youth attempts to scan twice, showing the exact time they already checked in.</li>
+            <li><strong>Walk-In Friendly:</strong> If a youth's phone battery is drained, officials can type their phone number or name to log them in manually.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 6: Targeted SMS Broadcast &amp; Community Alert Dispatch</div>
+        <div class="feature-desc">An emergency and announcement notification system delivering text messages directly to youth mobile phones.</div>
+        <ul>
+            <li><strong>Granular Audience Targeting:</strong> Broadcast to All KK Youth (General Assembly), Registered Attendees Only, or specific Purok/Sitio residents (e.g., river clean-up in Sitio Crossing).</li>
+            <li><strong>Live Preview &amp; 160-Char Counter:</strong> Shows exact SMS page segments and how the text appears on youth phones.</li>
+            <li><strong>Complete Audit Log:</strong> Records recipient names, phone numbers, timestamps, and delivery status in a permanent database table.</li>
+            <li><strong>Dual Operation:</strong> Runs in Simulator Mode for zero-cost demos, or connects to Semaphore to send live SMS across Globe, Smart, DITO, TM, and TNT.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 7: Youth Gamification (XP Points, Levels &amp; Badges)</div>
+        <div class="feature-desc">A fun rewards system inspired by modern mobile apps that turns community service into an engaging achievement.</div>
+        <ul>
+            <li><strong>Instant XP Crediting:</strong> Youth earn experience points (+50 XP, +80 XP, +100 XP) the second their pass is scanned at an event.</li>
+            <li><strong>Progression Tiers:</strong> Youth advance from Bronze Volunteer to Silver Civic Leader and Gold Youth Champion.</li>
+            <li><strong>Digital Badges:</strong> Automatically unlocks special awards like "Eco Warrior" for tree planting or "First Responder" for disaster drills.</li>
+        </ul>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-title">Feature 8: Real-Time Needs Assessment &amp; Demographics Analytics</div>
+        <div class="feature-desc">An interactive visual dashboard converting youth feedback and census data into clean charts for council budgeting.</div>
+        <ul>
+            <li><strong>Visual Demographics:</strong> Live charts showing youth distribution per Purok, education levels, and employment status.</li>
+            <li><strong>Data-Driven Budgets:</strong> Gives SK officials hard data to defend their 10% Barangay Youth Budget before the Sangguniang Barangay.</li>
+            <li><strong>1-Click Excel/CSV Export:</strong> Exports official masterlists ready for submission to the DILG, Local Youth Development Office (LYDO), and Commission on Audit (COA).</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- Diagram 2: Presentation Walkthrough Roadmap -->
+    <h2>5. Suggested 5-Minute Live Presentation Walkthrough</h2>
+    <p>Follow this recommended step-by-step presentation roadmap to demonstrate the entire ecosystem to your panel:</p>
+
+    <div class="diagram-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 240" width="850" height="240">
+            <defs>
+                <linearGradient id="stepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#2563eb" />
+                    <stop offset="100%" stop-color="#1d4ed8" />
+                </linearGradient>
+            </defs>
+
+            <!-- Background canvas -->
+            <rect width="850" height="240" rx="14" fill="#0f172a" />
+
+            <text x="30" y="36" fill="#38bdf8" font-weight="900" font-size="12" letter-spacing="1.5">5-MINUTE LIVE DEMO ROADMAP</text>
+            <text x="30" y="56" fill="#94a3b8" font-size="10">Recommended Screen &amp; Talking Sequence for Panel Presentation</text>
+
+            <!-- 5 Steps Horizontal -->
+            <!-- Step 1 -->
+            <g transform="translate(25, 75)">
+                <rect width="148" height="135" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                <circle cx="28" cy="28" r="14" fill="#3b82f6" />
+                <text x="24" y="33" fill="#ffffff" font-weight="bold" font-size="12">1</text>
+                <text x="50" y="32" fill="#ffffff" font-weight="bold" font-size="10.5">Youth Experience</text>
+                <line x1="12" y1="52" x2="136" y2="52" stroke="#334155" />
+                <text x="14" y="70" fill="#cbd5e1" font-size="8.5">• Online Registration</text>
+                <text x="14" y="85" fill="#cbd5e1" font-size="8.5">• ID Photo Upload</text>
+                <text x="14" y="100" fill="#38bdf8" font-weight="bold" font-size="8.5">• Digital QR Pass</text>
+                <text x="14" y="118" fill="#64748b" font-size="7.5">Screen: /profile/digital-id</text>
+            </g>
+
+            <!-- Arrow 1-2 -->
+            <path d="M 177,142 L 193,142" stroke="#60a5fa" stroke-width="2.5" stroke-dasharray="3,3" />
+
+            <!-- Step 2 -->
+            <g transform="translate(193, 75)">
+                <rect width="148" height="135" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                <circle cx="28" cy="28" r="14" fill="#6366f1" />
+                <text x="24" y="33" fill="#ffffff" font-weight="bold" font-size="12">2</text>
+                <text x="50" y="32" fill="#ffffff" font-weight="bold" font-size="10.5">Event Planning</text>
+                <line x1="12" y1="52" x2="136" y2="52" stroke="#334155" />
+                <text x="14" y="70" fill="#cbd5e1" font-size="8.5">• NYC 9 Centers</text>
+                <text x="14" y="85" fill="#cbd5e1" font-size="8.5">• Purok Filtering</text>
+                <text x="14" y="100" fill="#a78bfa" font-weight="bold" font-size="8.5">• 1-Click SMS Broadcast</text>
+                <text x="14" y="118" fill="#64748b" font-size="7.5">Screen: /admin/events/4</text>
+            </g>
+
+            <!-- Arrow 2-3 -->
+            <path d="M 345,142 L 361,142" stroke="#818cf8" stroke-width="2.5" stroke-dasharray="3,3" />
+
+            <!-- Step 3 -->
+            <g transform="translate(361, 75)">
+                <rect width="148" height="135" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+                <circle cx="28" cy="28" r="14" fill="#0284c7" />
+                <text x="24" y="33" fill="#ffffff" font-weight="bold" font-size="12">3</text>
+                <text x="50" y="32" fill="#38bdf8" font-weight="bold" font-size="10.5">Gate Scanner</text>
+                <line x1="12" y1="52" x2="136" y2="52" stroke="#334155" />
+                <text x="14" y="70" fill="#cbd5e1" font-size="8.5">• Phone Camera Live</text>
+                <text x="14" y="85" fill="#cbd5e1" font-size="8.5">• Instant Chime / Vibe</text>
+                <text x="14" y="100" fill="#38bdf8" font-weight="bold" font-size="8.5">• Duplicate Guard</text>
+                <text x="14" y="118" fill="#64748b" font-size="7.5">Screen: /attendance/scanner</text>
+            </g>
+
+            <!-- Arrow 3-4 -->
+            <path d="M 513,142 L 529,142" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="3,3" />
+
+            <!-- Step 4 -->
+            <g transform="translate(529, 75)">
+                <rect width="148" height="135" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                <circle cx="28" cy="28" r="14" fill="#10b981" />
+                <text x="24" y="33" fill="#ffffff" font-weight="bold" font-size="12">4</text>
+                <text x="50" y="32" fill="#ffffff" font-weight="bold" font-size="10.5">Gamification</text>
+                <line x1="12" y1="52" x2="136" y2="52" stroke="#334155" />
+                <text x="14" y="70" fill="#cbd5e1" font-size="8.5">• Instant XP Credit</text>
+                <text x="14" y="85" fill="#cbd5e1" font-size="8.5">• Tier Promotion</text>
+                <text x="14" y="100" fill="#34d399" font-weight="bold" font-size="8.5">• Achievement Badges</text>
+                <text x="14" y="118" fill="#64748b" font-size="7.5">Screen: /youth/badges</text>
+            </g>
+
+            <!-- Arrow 4-5 -->
+            <path d="M 681,142 L 697,142" stroke="#34d399" stroke-width="2.5" stroke-dasharray="3,3" />
+
+            <!-- Step 5 -->
+            <g transform="translate(697, 75)">
+                <rect width="138" height="135" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+                <circle cx="28" cy="28" r="14" fill="#f59e0b" />
+                <text x="24" y="33" fill="#ffffff" font-weight="bold" font-size="12">5</text>
+                <text x="50" y="32" fill="#ffffff" font-weight="bold" font-size="10.5">Analytics</text>
+                <line x1="12" y1="52" x2="126" y2="52" stroke="#334155" />
+                <text x="14" y="70" fill="#cbd5e1" font-size="8.5">• Demographics Charts</text>
+                <text x="14" y="85" fill="#cbd5e1" font-size="8.5">• Needs Assessment</text>
+                <text x="14" y="100" fill="#fbbf24" font-weight="bold" font-size="8.5">• 1-Click Excel Export</text>
+                <text x="14" y="118" fill="#64748b" font-size="7.5">Screen: /admin/analytics</text>
+            </g>
+        </svg>
+    </div>
+
+    <!-- Presentation Script Steps -->
+    <div class="script-step">
+        <div class="script-step-num">Step 1: The Youth Experience (Registration &amp; Digital Card)</div>
+        <div class="quote-say">"Good morning panel. In our barangay, youth can register online in under two minutes. They input their demographics, select their Purok, and upload their student ID. Once registered, they are issued a tamper-proof Digital Katipunan ng Kabataan Pass with an encrypted QR code on their phone."</div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;"><strong>Screen to show:</strong> <code>/youth/profile/digital-id</code> highlighting the interactive QR code, voter badge, and youth code.</p>
+    </div>
+
+    <div class="script-step">
+        <div class="script-step-num">Step 2: Event Planning &amp; Instant SMS Broadcast</div>
+        <div class="quote-say">"When the SK Council plans a community initiative, officials categorize it under NYC's 9 youth centers. Instead of printing physical paper flyers, officials click 'Broadcast Alert' to dispatch SMS notices to all youth or specific Purok residents."</div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;"><strong>Screen to show:</strong> <code>/admin/events/4</code>, click 'Broadcast Alert' modal, show the 160-char preview and the SMS Dispatch Audit table.</p>
+    </div>
+
+    <div class="script-step">
+        <div class="script-step-num">Step 3: Live Smartphone QR Gate Scanner</div>
+        <div class="quote-say">"At the Barangay Gym entrance, officials don't need pens or paper sign-in sheets. Using any regular smartphone, an official opens the gate scanner, points the camera at the youth's QR pass, and the system instantly logs attendance while preventing duplicate entries."</div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;"><strong>Screen to show:</strong> <code>/admin/attendance/scanner</code>, tap 'Start Phone Camera', demonstrate scanning a pass or clicking a demo button.</p>
+    </div>
+
+    <div class="script-step">
+        <div class="script-step-num">Step 4: Gamification &amp; Youth Empowerment</div>
+        <div class="quote-say">"Checking in immediately rewards the youth with Experience Points (XP) and digital achievement badges, motivating active volunteerism across the community."</div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;"><strong>Screen to show:</strong> <code>/youth/badges</code> showing unlocked badges (Eco Warrior, Civic Leader).</p>
+    </div>
+
+    <div class="script-step">
+        <div class="script-step-num">Step 5: Executive Analytics &amp; DILG Compliance</div>
+        <div class="quote-say">"Finally, during council budget sessions, officials use real-time visual charts to defend fund allocations based on actual youth demographics, with 1-click export to Excel for official DILG and LYDO reporting."</div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 4px;"><strong>Screen to show:</strong> <code>/admin/analytics</code> showing Purok distribution and employment charts, then clicking 'Export CSV'.</p>
+    </div>
+
+    <!-- Governance Benefits -->
+    <h2>6. Key Governance &amp; Community Value</h2>
+    <ul>
+        <li><strong>Republic Act 10742 (SK Reform Act) Mandate:</strong> Directly fulfills the legal requirement for SK councils to maintain a comprehensive, verified Katipunan ng Kabataan registry.</li>
+        <li><strong>100% Paperless &amp; Cost Efficient:</strong> Eliminates thousands of pesos spent annually on printing paper sign-up sheets, survey questionnaires, and physical logbooks.</li>
+        <li><strong>Ghost-Attendee Prevention:</strong> Digital QR scans record verified timestamps, ensuring transparency during Commission on Audit (COA) reviews for food packs, kits, and allowances.</li>
+        <li><strong>Disaster Readiness:</strong> In emergency situations, the council can filter youth by Purok or Sitio and blast urgent SMS alerts within seconds.</li>
+    </ul>
+
+    <!-- FAQ Cheat Sheet -->
+    <h2>7. Presentation Q&amp;A Cheat Sheet (Common Panel Questions)</h2>
+    <div style="font-size: 9pt;">
+        <p><strong>Q1: What if a youth doesn't have an internet connection at the gym?</strong><br>
+        <em>Answer:</em> The youth can save a screenshot of their Digital QR Pass or print a physical card once. The admin scanner reads offline images and paper passes instantly.</p>
+
+        <p><strong>Q2: What if a youth's phone battery runs out?</strong><br>
+        <em>Answer:</em> The scanner interface includes a manual search bar where the official can type the youth's phone number or name to log them in with zero delay.</p>
+
+        <p><strong>Q3: Does the SMS broadcast cost the barangay a lot of money?</strong><br>
+        <em>Answer:</em> No. The platform includes a free Simulator Mode for zero-cost testing and demonstrations, and connects to Philippine gateways like Semaphore at wholesale rates (approx. 50 centavos per text) for real barangay operations.</p>
+
+        <p><strong>Q4: How is private youth data protected?</strong><br>
+        <em>Answer:</em> Youth members can only see their own passes and activities. Administrative access, ID documents, and masterlists are strictly restricted to authenticated SK Officials.</p>
+    </div>
+
+    <!-- Sign-off Footer -->
+    <div style="margin-top: 24px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 8pt; color: #94a3b8; text-align: center;">
+        SKYIMS Platform Documentation • Sangguniang Kabataan Barangay Tibao • Prepared for Official Project Presentation
+    </div>
+
+</body>
+</html>
